@@ -46,21 +46,6 @@ docker compose up -d
 
 Le DAG `sales_etl_pipeline` peut être déclenché manuellement depuis l'interface Airflow, ou s'exécute automatiquement chaque jour.
 
-## Structure du projet
-
-ecommerce-etl-pipeline/
-├── docker-compose.yml # Orchestration Airflow + 3 bases Postgres
-├── dags/
-│ └── sales_etl_dag.py # DAG Airflow : extraction → transformation → chargement
-├── src/
-│ ├── extract.py # Extraction base CRM + CSV
-│ ├── transform.py # Harmonisation vers le schéma cible
-│ ├── load.py # Chargement idempotent dans le data warehouse
-│ ├── requirements.txt
-│ └── data/erp_export.csv # Exemple d'export ERP
-└── sql/
-├── schema.sql # Schéma du data warehouse
-└── init_source.sql # Données factices pour la base source
 
 
 ## Difficultés rencontrées et résolues
