@@ -47,3 +47,33 @@ docker compose up -d
 Le DAG `sales_etl_pipeline` peut être déclenché manuellement depuis l'interface Airflow, ou s'exécute automatiquement chaque jour.
 
 ## Structure du projet
+
+ecommerce-etl-pipeline/
+├── docker-compose.yml # Orchestration Airflow + 3 bases Postgres
+├── dags/
+│ └── sales_etl_dag.py # DAG Airflow : extraction → transformation → chargement
+├── src/
+│ ├── extract.py # Extraction base CRM + CSV
+│ ├── transform.py # Harmonisation vers le schéma cible
+│ ├── load.py # Chargement idempotent dans le data warehouse
+│ ├── requirements.txt
+│ └── data/erp_export.csv # Exemple d'export ERP
+└── sql/
+├── schema.sql # Schéma du data warehouse
+└── init_source.sql # Données factices pour la base source
+
+
+## Difficultés rencontrées et résolues
+
+- **Conflit de dépendances Airflow** : forcer une version récente de SQLAlchemy dans `requirements.txt` cassait Airflow en interne (qui a besoin de SQLAlchemy < 2.0). Résolu en ne pinnant que les dépendances sans conflit.
+- **Conflit de port** : le port 8080 était déjà utilisé par un autre service local — Airflow a été redirigé sur le port 8081.
+- **Résolution réseau Docker** : les scripts Python doivent utiliser `localhost` en local mais le nom du service Docker (`source-db`, `dwh-db`) depuis Airflow. Résolu avec des variables d'environnement à valeur par défaut.
+- **Idempotence** : le chargement initial en `append` créait des doublons à chaque nouvelle exécution du DAG. Résolu avec un `DELETE` ciblé par `order_id` avant chaque `INSERT`.
+
+## Pistes d'amélioration
+
+- Ajouter une 3e source (API produits) pour peupler `dim_product`
+- Ajouter des tests unitaires sur les fonctions de transformation
+- Ajouter un dashboard BI (Metabase) connecté au data warehouse
+- CI/CD avec GitHub Actions
+
