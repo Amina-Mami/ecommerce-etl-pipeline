@@ -35,7 +35,7 @@ unique, orchestré par Apache Airflow.
 ## Démarrage rapide
 
 ```bash
-git clone <repo>
+git clone https://github.com/Amina-Mami/ecommerce-etl-pipeline.git
 cd ecommerce-etl-pipeline
 docker compose up -d
 ```
